@@ -6,6 +6,7 @@ import urllib
 import requests
 from requests.exceptions import ConnectionError
 
+import os
 from elastichq.model import ClusterModel
 from elastichq.service.persistence import ClusterDBService
 from ..globals import CONNECTIONS, LOG, REQUEST_TIMEOUT
@@ -39,8 +40,8 @@ class ConnectionService:
                           fail_on_exception=False, enable_ssl=False, ca_certs=None):
         """
         Creates a connection with a cluster and place the connection inside of a connection pool, using the cluster_name as an alias.
-        :param ip: 
-        :param port: 
+        :param ip:
+        :param port:
         :param scheme:
         :param fail_on_exception: If we should raise an exception on a failed connection
         :return:
@@ -49,8 +50,8 @@ class ConnectionService:
             is_basic_auth = False
 
             # clean the params
-            username = None if username == "" else username
-            password = None if password == "" else password
+            username = os.environ.get("AUTH_USER", None) if username == "" else username
+            password = os.environ.get("AUTH_PASSWORD", None) if password == "" else password
 
             if username is not None and password is not None:
                 is_basic_auth = True
@@ -140,9 +141,9 @@ class ConnectionService:
 
     def get_connection(self, cluster_name, create_if_missing=True):
         """
-        Interface for cluster connection pool object. If a connection does not exist, it will attempt to create it, using what is stored in the database. If it cannot find the connection 
+        Interface for cluster connection pool object. If a connection does not exist, it will attempt to create it, using what is stored in the database. If it cannot find the connection
         or cannot create one from the database, it will throw a ConnectionNotFoundException
-        :param cluster_name: 
+        :param cluster_name:
         :param create_if_missing: Will create the connection in the connection pool AND the persistence layer if it does not exist.
         :return:
         """

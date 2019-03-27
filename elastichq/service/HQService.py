@@ -15,15 +15,18 @@ class HQService:
     def get_status(self):
 
         version_str = ""
-        try:
-            fp = request.urlopen("http://www.elastichq.org/currversion.json", timeout=10)
-            mbyte = fp.read()
-            version_str = mbyte.decode("utf-8")
-            fp.close()
-        except Exception as ex:
-            LOG.error("error retrieving version information", ex)
 
-        stable_version = (json.loads(version_str)).get("version", None)
+        skip_verification = os.environ.get("HQ_SKIP_VERSION_VERIFICATION","false")
+        if skip_verification == "false":
+            try:
+                fp = request.urlopen("http://www.elastichq.org/currversion.json", timeout=10)
+                mbyte = fp.read()
+                version_str = mbyte.decode("utf-8")
+                fp.close()
+            except Exception as ex:
+                LOG.error("error retrieving version information", ex)
+
+        stable_version = (json.loads(version_str)).get("version", current_app.config.get('API_VERSION'))
 
         from elastichq.service import ClusterService
         clusters = ClusterService().get_clusters(create_if_missing=False)

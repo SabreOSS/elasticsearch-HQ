@@ -54,7 +54,7 @@
       "propagate": "no"
     },
     "elasticsearch": {
-      "level": "DEBUG",
+      "level": "INFO",
       "handlers": [],
       "qualname": "elasticsearch",
       "propagate": "no"
@@ -73,7 +73,7 @@
     }
   },
   "root": {
-    "level": "DEBUG",
+    "level": "INFO",
     "handlers": [
       "console",
       "standard_handler"
